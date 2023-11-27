@@ -1,0 +1,3 @@
+// looks like it is a limitation of @rollup/plugin-inject...
+import _Buffer from './node_modules/buffer/index.js'
+export const { Buffer } = _Buffer
