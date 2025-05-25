@@ -1,15 +1,12 @@
+# CoWasm: Collaborative WebAssembly for Servers and Browsers
 
-#### CoWasm: Collaborative WebAssembly for Servers and Browsers 
-##### https://github.com/sagemathinc/cowasm 
+URL: https://github.com/sagemathinc/cowasm
 
 # Welcome 
 
-The current CoWasm website is very broken, so I want to try to clean this up.
+CoWasm, or "Collaborative WebAssembly," goes far beyond just Python. The collaboration aspects will be part of [CoCalc](https://cocalc.com) at some point in the future. CoWasm will support various technologies (such as libgit2 and realtime sync) that are important foundations for collaboration.
 
-
-CoWasm, or "Collaborative WebAssembly," goes far beyond just Python. The collaboration aspects will be part of [CoCalc](https://cocalc.com) at some point in the future. CoWasm will support various technologies (such as libgit2 and real-time sync) that are important foundations for collaboration.
-
-The underlying software components that CoWasm is built on (i.e., those we didn't write) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its excellent cross-compilation support and packaging of clang/llvm and musl-libc, which are themselves both very mature. Many other components, such as Python, Dash, and Numpy, are extremely mature, multi-decade-old projects. Moreover, other components of CoWasm, such as memfs, are libraries with 10M+ downloads per week that are heavily used in production.
+The underlying software components that CoWasm is built on (i.e., those we didn't write) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its amazing cross-compilation support and packaging of clang/llvm and musl-libc, which are themselves both very mature. Many other components, such as Python, Dash, and Numpy, are extremely mature, multi-decade-old projects. Moreover, other components of CoWasm, such as memfs, are libraries with 10M+ downloads per week that are heavily used in production.
 
 The goal of CoWasm is overall somewhat similar to emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) combined, in various ways:
 
@@ -23,11 +20,12 @@ The goal of CoWasm is overall somewhat similar to emscripten, [WebAssembly.sh](h
   - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
 
  
-CoWasm consists primarily of 5 packages:
 
 
-### Packages
 
+## Packages
+
+There are several subdirectories that each contain packages:
 - **core** – Core functionality, including dynamic linking, a WASI implementation, OpenSSL, and nontrivial POSIX extensions to Node.js written in Zig. (This is analogous to [emscripten.org](https://emscripten.org/).)
 - **python** – A WebAssembly build of Python, along with some nontrivial scientific libraries. (This is analogous to [pyodide.org](https://pyodide.org).)
 - **web** – Examples of how to use the other packages in web applications; this includes building https://cowasm.org.
@@ -302,11 +300,21 @@ name? william
 williamwilliamwilliam
 ```
 
+DEMOS:
+
+- https://cowasm.org \- Python using SharedArrayBuffers
+- https://zython.org \- Python using Service Workers
+- https://cowasm.sh \- Dash Shell with Python, Sqlite, Lua, etc., using SharedArrayBuffers
+
+
 ---
 
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twitter.com/wstein389) if find this interesting and want to help out.
+
+
+
 
 **CoWasm is an open source 3\-clause BSD licensed project. It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed, *except* some code in the sagemath subdirectory (which nothing else depends on).**
 
