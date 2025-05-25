@@ -2,130 +2,45 @@
 
 URL: https://github.com/sagemathinc/cowasm
 
-DEMOS:
+# Welcome 
 
-- https://cowasm.org \- Python using SharedArrayBuffers
-- https://zython.org \- Python using Service Workers
-- https://cowasm.sh \- Dash Shell with Python, Sqlite, Lua, etc., using SharedArrayBuffers
+CoWasm, or "Collaborative WebAssembly," goes far beyond just Python. The collaboration aspects will be part of [CoCalc](https://cocalc.com) at some point in the future. CoWasm will support various technologies (such as libgit2 and realtime sync) that are important foundations for collaboration.
 
-TEST STATUS:
+The underlying software components that CoWasm is built on (i.e., those we didn't write) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its amazing cross-compilation support and packaging of clang/llvm and musl-libc, which are themselves both very mature. Many other components, such as Python, Dash, and Numpy, are extremely mature, multi-decade-old projects. Moreover, other components of CoWasm, such as memfs, are libraries with 10M+ downloads per week that are heavily used in production.
 
-- [![make test CI](https://github.com/sagemathinc/cowasm/actions/workflows/make-test.yml/badge.svg)](https://github.com/sagemathinc/cowasm/actions/workflows/make-test.yml)
+The goal of CoWasm is overall somewhat similar to emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) combined, in various ways:
 
-Or Type this if you have nodejs at least version 16 installed:
+- Unlike [WebAssembly.sh](http://WebAssembly.sh) and [wapm.io](http://wapm.io) (but similar to [Pyodide](https://pyodide.org/en/stable/)), we make **very heavy use of shared dynamic libraries** (e.g., `-fPIC` code), which is only possible because of a plugin contributed from emscripten to LLVM. The "Co" in CoWasm suggests "collaboration" or "sharing," which also reflects how the binaries in this project are structured.
+- We use actual editline (similar to readline) instead of a JavaScript terminal. Moreover, unlike other WebAssembly shells, we use a real command-line shell (dash = Debian Almquist Shell). We also have a user space including ports of many coreutils, e.g., `ls`, `head`, `tail`, etc.
+- Unlike emscripten, we use modern TypeScript, our code is more modular, and we make use of existing components when possible (e.g., the Node.js memfs project), instead of writing our own.
+- A core design constraint is to efficiently run on a wide range of platforms-not just in the browser like emscripten, and not just on servers like wasmer. CoWasm should run on servers, desktops (e.g., as an Electron app), iPad/iOS apps, and in web browsers.
+- **There is no business-unfriendly GPL code in CoWasm.** CoWasm itself is extremely liberally licensed and business-friendly. The license of all new code and most components is 3-clause BSD. CoWasm will serve as a foundation for other projects with more restrictive licenses:
+  - CoCalc will build on top of CoWasm to provide a graphical interface and real-time collaboration, and that will be a commercial product.
 
-```sh
-~$ npx python-wasm@latest
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> 2 + 3
-5
->>> import numpy
->>> import sympy
-...
-```
+  - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
 
-NOTE: On Microsoft Windows you have to enter a few times, and there is an issue with terminal echo. We are working on this.
+ 
+
+
 
 ## Packages
 
-There are four subdirectories that each contain packages:
+There are several subdirectories that each contain packages:
+- **core** – Core functionality, including dynamic linking, a WASI implementation, OpenSSL, and nontrivial POSIX extensions to Node.js written in Zig. (This is analogous to [emscripten.org](https://emscripten.org/).)
+- **python** – A WebAssembly build of Python, along with some nontrivial scientific libraries. (This is analogous to [pyodide.org](https://pyodide.org).)
+- **web** – Examples of how to use the other packages in web applications; this includes building https://cowasm.org.
+- **desktop** – A native Electron app that provides a sandboxed WebAssembly Python terminal running on your native filesystem.
+- **sagemath** – The beginning of a port of https://sagemath.org to WebAssembly. Vast amounts of work remain.
 
-- **core** \- core functionality, including dynamic linking, a WASI implementation, openssl, and nontrivial posix extensions to node.js written in Zig. \(This is analogous to [emscripten.org.](https://emscripten.org/)\)
-- **python** \- a WebAssembly build of Python, along with some nontrivial scientific libraries \(This is analogous to [pyodide.org.\)](http://pyodide.org)
-- **web** \- examples of how to use the other packages in web applications; this includes building https://cowasm.org.
-- **desktop** \- a native Electron app that provides a sandboxed WebAssembly Python terminal running on your native filesystem.
-- **sagemath** \- beginning of a port of https://sagemath.org to WebAssembly. Vasts amounts of work remain.
 
-## What is this?
 
-CoWasm means "collaborative WebAssembly", and goes far beyond just Python. The collaboration aspects will be part of https://cocalc.com at some point in the future. CoWasm will support various technologies \(such as libgit2 and realtime sync\) that are important foundations for collaboration.
+### Python
 
-The underlying software components that CoWasm is built on \(i.e., that we didn't write\) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its amazing cross compilation support and packaging of clang/llvm and musl\-libc, which are themselves both very mature. Many other components, such as Python, Dash, Numpy, etc., are ridiculously mature multidecade old projects. Moreover, other components of CoWasm such as memfs are libraries with 10M\+ downloads per week that are heavily used in production.
-
-The goal of CoWasm is overall somewhat similar to all of emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) combined, in various ways.
-
-- Unlike [WebAssembly.sh](http://WebAssembly.sh) and [wapm.io](http://wapm.io) \(but similar to [Pyodide](https://pyodide.org/en/stable/)\), we make _**VERY heavy use of shared dynamic libraries**_ \(e.g., `-fPIC` code\), which is only possible because of a plugin contributed from emscripten to LLVM. The "Co" in CoWasm suggestion "collaboration" or "sharing", which also reflects how the binaries in this project are structured.
-- We use actual editline \(similar to readline\) instead of a Javascript terminal. Moreover, unlike other webassembly shells, we just use a real command line shell \(dash = Debian Almquist Shell\). We also have a userspace including ports of many coreutils, e.g., ls, head, tail, etc.
-- Unlike emscripten, we use modern Typescript, our code is more modular, and we make use of existing components when possible \(e.g., the nodejs memfs project\), instead of using our own.
-- A core design constraint is to efficiently run on a wide range of platforms, not mainly in the browser like emscripten, and not mainly on servers like wasmer. CoWasm should run on servers, desktops \(e.g., as an electron app\), an iPad/iOS app, and in web browsers.
-- **There is no business unfriendly GPL code in CoWasm.** CoWasm itself is extremely liberally licensed and business friendly. The license of all new code and most components is 3\-clause BSD. CoWasm will serve as a foundation for other projects with more restrictive licenses:
-  - CoCalc will build on top of CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
-  - Products like GP/PARI SageMath will build on CoWasm to provide GPL\-licensed mathematics software.
-
-## Python
-
-An exciting package in CoWasm is [python\-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers. It also supports extension modules such as numpy. See [python/README.md](python/README.md) for more details.
+An exciting package in CoWasm is [python-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly that supports both servers and browsers. It also supports extension modules such as numpy. See [python/README.md](python/README.md) for more details.
 
 <!--
 [<img src="https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml)
 -->
-
-### Try python-wasm
-
-Try the python-wasm REPL under node.js (version at least 16):
-
-```py
-~$ npx python-wasm@latest
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> 2 + 3
-5
->>> import sys; sys.version
-'3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571'
->>> sys.platform
-'wasi'
-```
-
-### Install python\-wasm
-
-Install python\-wasm into your project, and try it via the library interface and the node.js terminal.
-
-```sh
-npm install python-wasm
-```
-
-Then from the nodejs REPL:
-
-```js
-~/cowasm/core/python-wasm$ node
-Welcome to Node.js v19.0.0.
-Type ".help" for more information.
-> {syncPython, asyncPython} = require('.')
-{
-  syncPython: [AsyncFunction: syncPython],
-  asyncPython: [AsyncFunction: asyncPython],
-  default: [AsyncFunction: asyncPython]
-}
-> python = await syncPython(); 0;
-0
-> python.exec('import sys')
-undefined
-> python.repr('sys.version')
-"'3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf'"
-> python.exec('import numpy')
-undefined
-> python.repr('numpy.linspace(0, 10, num=5)')
-'array([ 0. ,  2.5,  5. ,  7.5, 10. ])'
-```
-
-There is also a Python REPL that is part of python\-wasm:
-
-```py
-> python.terminal()
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> 2 + 3   # you can edit using readline
-5
->>> input('name? ')*3
-name? william  <-- I just typed "william"
-'williamwilliamwilliam'
->>> import time; time.sleep(3)  # sleep works
->>> while True: pass   # ctrl+c works, but exits this terminal
-> # back in node.
-```
-
-You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/core/webpack). In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
 
 ## Build from Source
 
@@ -385,11 +300,21 @@ name? william
 williamwilliamwilliam
 ```
 
+DEMOS:
+
+- https://cowasm.org \- Python using SharedArrayBuffers
+- https://zython.org \- Python using Service Workers
+- https://cowasm.sh \- Dash Shell with Python, Sqlite, Lua, etc., using SharedArrayBuffers
+
+
 ---
 
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twitter.com/wstein389) if find this interesting and want to help out.
+
+
+
 
 **CoWasm is an open source 3\-clause BSD licensed project. It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed, *except* some code in the sagemath subdirectory (which nothing else depends on).**
 
